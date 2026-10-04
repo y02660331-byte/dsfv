@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A simple three-page sorry card">
+<title>Sorry Card</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: Georgia, "Times New Roman", serif;
+    background: #d8c1ad;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.book {
+    position: relative;
+    width: min(100vw, 900px);
+    height: min(100vh, 620px);
+    perspective: 1800px;
+}
+
+.page {
+    position: absolute;
+    inset: 0;
+    background: #f8e9dc;
+    border: 1px solid #d5c0ae;
+    box-shadow: 0 0 18px rgba(74, 51, 40, 0.20);
+    overflow: hidden;
+    transform-origin: left center;
+    transition: transform 1.05s cubic-bezier(.65,.05,.36,1);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.page:nth-child(1) { z-index: 3; }
+.page:nth-child(2) { z-index: 2; }
+.page:nth-child(3) { z-index: 1; }
+
+.page.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* =========================
+   PAGE 1
+========================= */
+
+.cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(24px, 5vw, 52px) 20px 80px;
+}
+
+.title {
+    margin: 0;
+    color: #765348;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(48px, 9vw, 68px);
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.heart {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+    font-size: clamp(48px, 8vw, 64px);
+    line-height: 1;
+    filter: drop-shadow(0 1px 0 #111);
+}
+
+.subtitle {
+    margin: 22px 0 0;
+    color: #725d53;
+    font-size: clamp(17px, 2.4vw, 20px);
+    letter-spacing: .2px;
+}
+
+.message {
+    margin: 27px 0 0;
+    color: #725d53;
+    font-size: clamp(16px, 2.2vw, 19px);
+    line-height: 1.5;
+}
+
+.flowers {
+    position: absolute;
+    left: 50%;
+    bottom: 42px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+    font-size: 48px;
+}
+
+.flowers .center-heart {
+    font-size: 48px;
+}
+
+/* =========================
+   PAGE 2
+========================= */
+
+.letter-page {
+    display: block;
+    padding: clamp(28px, 5vw, 52px) clamp(24px, 7vw, 70px) 90px;
+    overflow-y: auto;
+    text-align: left;
+    color: #684f45;
+}
+
+.letter-page h2 {
+    margin: 0 0 22px;
+    text-align: center;
+    color: #765348;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(25px, 4vw, 34px);
+    line-height: 1.25;
+}
+
+.letter-page p {
+    margin: 0 0 17px;
+    font-size: clamp(15px, 2vw, 18px);
+    line-height: 1.65;
+}
+
+.letter-page strong {
+    color: #5f463d;
+}
+
+.letter-page::-webkit-scrollbar {
+    width: 7px;
+}
+
+.letter-page::-webkit-scrollbar-thumb {
+    background: #c5a997;
+    border-radius: 10px;
+}
+
+/* =========================
+   PAGE 3
+========================= */
+
+.inside {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8e9dc;
+}
+
+.outro-page {
+    width: min(760px, 90%);
+    max-height: 100%;
+    overflow-y: auto;
+    text-align: center;
+    color: #624c43;
+    padding: clamp(35px, 7vw, 75px) 10px 85px;
+}
+
+.outro-heart {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+    font-size: clamp(42px, 7vw, 58px);
+    margin-bottom: 12px;
+}
+
+.outro-page h2 {
+    margin: 0 0 25px;
+    color: #765348;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(28px, 5vw, 42px);
+}
+
+.outro-page p {
+    margin: 0 auto 20px;
+    max-width: 680px;
+    font-size: clamp(16px, 2.3vw, 20px);
+    line-height: 1.65;
+}
+
+.outro-final {
+    margin-top: 28px;
+    color: #765348;
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: bold;
+}
+
+/* =========================
+   ARROWS
+========================= */
+
+.arrow {
+    position: fixed;
+    z-index: 20;
+    bottom: 18px;
+    width: 52px;
+    height: 52px;
+    border: 0;
+    border-radius: 50%;
+    background: #765348;
+    color: white;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(65, 42, 32, .25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s ease, background .2s ease;
+    user-select: none;
+}
+
+.arrow:hover {
+    transform: scale(1.05);
+    background: #65473e;
+}
+
+.arrow:active {
+    transform: scale(.97);
+}
+
+.arrow.back {
+    left: 18px;
+    display: none;
+}
+
+.arrow.back.show {
+    display: flex;
+}
+
+.arrow.next {
+    right: 18px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        background: #f8e9dc;
+    }
+
+    .book {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .page {
+        border: 0;
+        box-shadow: none;
+    }
+
+    .cover {
+        padding-top: 11vh;
+    }
+
+    .title {
+        gap: 10px;
+        font-size: clamp(43px, 14vw, 60px);
+    }
+
+    .subtitle {
+        margin-top: 24px;
+    }
+
+    .message {
+        max-width: 90%;
+        margin-top: 28px;
+    }
+
+    .flowers {
+        bottom: 80px;
+        gap: 12px;
+        font-size: 40px;
+    }
+
+    .flowers .center-heart {
+        font-size: 42px;
+    }
+
+    .letter-page {
+        padding: 28px 20px 85px;
+    }
+
+    .letter-page p {
+        font-size: 15px;
+        line-height: 1.58;
+        margin-bottom: 15px;
+    }
+
+    .outro-page {
+        padding: 35px 20px 90px;
+    }
+
+    .outro-page p {
+        line-height: 1.6;
+    }
+
+    .arrow {
+        bottom: 16px;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page {
+        transition-duration: .2s;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="book" aria-label="Three page sorry card">
+
+    <!-- =========================
+         PAGE 1
+    ========================== -->
+
+    <section class="page cover" id="page1">
+
+        <h1 class="title">
+            SORRY
+            <span class="heart">💗</span>
+        </h1>
+
+        <p class="subtitle">
+            I hope you can forgive me.
+        </p>
+
+        <p class="message">
+            Some mistakes deserve an honest apology, and this is mine.
+        </p>
+
+        <div class="flowers" aria-hidden="true">
+            <span>🌸</span>
+            <span class="center-heart">💗</span>
+            <span>🌸</span>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PAGE 2
+    ========================== -->
+
+    <section class="page letter-page" id="page2">
+
+        <h2>I’m Really Sorry, Sister 🥺</h2>
+
+        <p>
+            I’m sorry, sister. M aapko hurt nahi karna chahta tha.
+            Aap bahut hi achhi ladki ho. Aapne mera aur Sana ka
+            patch-up karaya tha, aur uske liye aapka bahut-bahut
+            thank you. ❤️
+        </p>
+
+        <p>
+            Aur sorry bhi… but really, main aapko blame nahi kar raha tha.
+            Shayad meri baaton se aapko aisa laga hoga ki main aapko
+            blame kar raha hoon, but honestly mera woh intention bilkul nahi tha.
+        </p>
+
+        <p>
+            Agar mera woh intention hota, toh main khud aapko kyun
+            dhundhta aur khud hi aapko message kyun karta?
+            Mujhe apni baatein properly express karni nahi aati,
+            shayad isi wajah se aapne meri baaton ka matlab galat samajh liya.
+        </p>
+
+        <p>
+            Maine aaj tak kisi ladki ko hurt nahi kiya, kyunki main jaanta hoon
+            ki ladkiyon ke dil bahut soft aur sensitive hote hain.
+            Lekin maine aapko hurt kiya, aur meri wajah se aap royi —
+            mujhe is baat ka bahut dukh hai. I’m really sorry for that. 🥺
+        </p>
+
+        <p>
+            Mujhe pata hai ki mere sorry bolne se aapke tears wapas nahi aa sakte,
+            but sach mein mera intention aapko hurt karne ka nahi tha.
+            Aap jaanti ho, mujhe apni feelings aur baatein express karni nahi aati.
+            Isi wajah se kabhi-kabhi mujhe pata nahi chalta ki meri baat
+            saamne wale ko hurt kar sakti hai.
+        </p>
+
+        <p>
+            Aur mujhe aapse koi problem nahi thi. Aap chaho toh Sana se pooch lena,
+            ya meri chats dekh lena — maine kabhi aisa nahi bola ki mujhe
+            aapse koi problem hai.
+        </p>
+
+        <p>
+            But anyways, ab shayad in sab baaton ko explain karne ka koi point nahi hai,
+            kyunki jo hona tha woh ho gaya aur aap hurt ho gayi.
+        </p>
+
+        <p>
+            Mujhe pata hai ki ye thoda mushkil hai, but agar ho sake toh
+            <strong>mujhe maaf kar dena. 🥺</strong>
+            <br>
+            Main aapko ab kabhi pareshan nahi karunga.
+        </p>
+
+        <p>
+            <strong>I’m genuinely sorry. ❤️</strong>
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         PAGE 3
+    ========================== -->
+
+    <section class="page inside" id="page3">
+
+        <div class="outro-page">
+
+            <div class="outro-heart">
+                🥺❤️
+            </div>
+
+            <h2>
+                Please Mujhe Maaf Kardo
+            </h2>
+
+            <p>
+                Please muje maf kardo. I am genuinely sorry.
+                1 ladki ko hurt karna thik nahi hota aur main bhi ye
+                kabhi nahi karna chahta tha. Please forgive me.
+            </p>
+
+            <p>
+                Chota bhai samaj ke maf kardo.
+                Chota bhai isliye kyuki muje lagata hai aap Sana ki
+                age ke ho aur main Sana se chota ho.
+            </p>
+
+            <div class="outro-final">
+                I’m genuinely sorry. ❤️
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- PAGE NAVIGATION -->
+
+<button
+    class="arrow back"
+    id="backBtn"
+    aria-label="Previous page">
+    ←
+</button>
+
+<button
+    class="arrow next"
+    id="nextBtn"
+    aria-label="Next page">
+    →
+</button>
+
+
+<script>
+
+const pages = [...document.querySelectorAll(".page")];
+
+const nextBtn = document.getElementById("nextBtn");
+const backBtn = document.getElementById("backBtn");
+
+let currentPage = 0;
+
+
+/* Update navigation buttons */
+
+function updateButtons() {
+
+    backBtn.classList.toggle(
+        "show",
+        currentPage > 0
+    );
+
+    nextBtn.style.display =
+        currentPage < pages.length - 1
+            ? "flex"
+            : "none";
+}
+
+
+/* Next page */
+
+function nextPage() {
+
+    if (currentPage < pages.length - 1) {
+
+        pages[currentPage].classList.add("flipped");
+
+        currentPage++;
+
+        updateButtons();
+    }
+}
+
+
+/* Previous page */
+
+function previousPage() {
+
+    if (currentPage > 0) {
+
+        currentPage--;
+
+        pages[currentPage].classList.remove("flipped");
+
+        updateButtons();
+    }
+}
+
+
+/* Button controls */
+
+nextBtn.addEventListener(
+    "click",
+    nextPage
+);
+
+backBtn.addEventListener(
+    "click",
+    previousPage
+);
+
+
+/* Keyboard controls */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "ArrowRight" ||
+            event.key === "ArrowDown"
+        ) {
+            nextPage();
+        }
+
+        if (
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowUp"
+        ) {
+            previousPage();
+        }
+
+    }
+);
+
+
+/* Start */
+
+updateButtons();
+
+</script>
+
+</body>
+</html>
